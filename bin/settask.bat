@@ -1,0 +1,1 @@
+schtasks /Create /SC HOURLY /TN PythonTask /TR "C:\Python27\python.exe C:\Users\Avalon\dev\dualwallpaper\bin"
