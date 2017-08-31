@@ -5,7 +5,25 @@ import os
 import re # for crawling for URLs
 import random
 import ctypes # for setting wallpaper
- # for downloading from unsplash
+
+try:
+	from PIL import Image
+except ImportError:
+	pip.main(['install', "Pillow"]) # for putting images together
+	from PIL import Image
+	
+try:
+	import requests # for http requests (unsplashed.com)
+except ImportError:
+	pip.main(['install', "requests"])
+	import requests
+	
+	
+# config
+width = "1920"
+height = "1080"
+avoidcached = False
+debug = True
 
 # directories
 bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
@@ -14,53 +32,32 @@ imagedir = bindir + "..\\images\\"
 # lists
 downloaded=[]
 
-# config
-width = "1920"
-height = "1080"
-avoidcached = False
-debug = True
-
-try:
-	from PIL import Image
-except ImportError:
-	pip.main(['install', "Pillow"])
-	from PIL import Image
-	
-try:
-	import requests
-except ImportError:
-	pip.main(['install', "requests"])
-	import requests
 
 
 # fill downloaded list if image directory already exists
-try:
-	os.mkdir(imagedir)
-except OSError: # directory exists
-	for image in os.listdir(imagedir):
-		downloaded.append(image)
+def makeImageDir(website):
+	try:
+		os.mkdir(imagedir + website)
+	except OSError: # directory exists
+		for image in os.listdir(imagedir):
+			downloaded.append(image)
 
 def debug(this):
 	if debug:
 		print this
 
 def getImages(website):
-	urls=[]	   # holds all of them
+	urls=[]	      # holds all of them
 	usedurls=[]   # holds urls that have been downloaded
 	unusedurls=[] # holds urls that haven't been downloaded yet
 	goodurls=[]   # holds only the two to download
 	imagepaths=[] # where the images sit after download
-
-	# create folder to store images from site
-	try:
-		os.mkdir(imagedir + website)
-	except OSError:
-		pass
 	
 	if website is "mikedrawsdota":
-		website = 'http://mdd.hirshon.net/'
+		makeImageDir(website)
+		websiteurl = 'http://mdd.hirshon.net/'
 		# go to website and scrape urls, sort out the ones with resolution in filename
-		for url in re.findall('''href=["'](.[^"']+)["']''', urllib.urlopen(website).read(), re.I):
+		for url in re.findall('''href=["'](.[^"']+)["']''', urllib.urlopen(websiteurl).read(), re.I):
 			if width in url and height in url:
 					urls.append(url)
 					debug("all urls")
@@ -97,43 +94,80 @@ def getImages(website):
 		for goodurl in goodurls:
 			filename = goodurl.split('/')[-1] # Set filename to url's filename
 			debug("filename: " + filename)
-			imagepath = imagedir + "mikedrawsdota\\" + filename # Set image path based on filename
 			
-			if not os.path.isfile(imagepath): # only download if it doesn't exist already
-				# Download image and return the path to it
-				imagefile = open(imagepath, "wb")
-				imagefile.write(urllib.urlopen(goodurl).read())
-				imagefile.close()
-			else:
-				print "file " + str(imagepath) + " already exists, using cached image"
+			# download image to path
+			path = imagedir + website + "\\" + filename
+			download(goodurl, path)
 			
-			imagepaths.append(imagepath) # add the image path to list
+			imagepaths.append(path) # add the image path to list
 					
 			
 	if website is "unsplash":
-		website = "https://api.unsplash.com/photos/random/"
-		# need to send this request:
-		# GET /photos/random/w: width h: height 
-		prams = {'w':width, 'h':height, 'count':2}
+		makeImageDir(website)
+		websiteurl = "https://api.unsplash.com/photos/random"
 		
-		r = requests.get(url = website, params = prams)
+		# get authorized with dualwallpaper application id
+		ID = 'cd356c3b262be554770bea925ce5119f0503605b31a6dc4f3e9365babfd1674c'		
+		image_params = {'w':width, 'h':height, 'count':2, 'client_id':ID}
 		
-		data = r.json
-		print data
+		# Request an array of 2 images' json data from api
+		r = requests.get(websiteurl, params = image_params)
 		
-		print urllib2.urlopen(website).read()
-		print website + params
-		print urllib2.urlopen(website + params).read()
+		creditfile = open(imagedir + "unsplash_image_info.txt", 'w')
 		
+		
+		# For each image
+		side = "Left"
+		for response in r.json():
+			url = response["urls"]["custom"].encode("ascii")
+			filename = response["id"].encode("ascii")
+			
+			# download image from url to path
+			path = imagedir + website + "\\" + filename 
+			download(url, path)
+		
+			imagepaths.append(path)
+			
+			# get image info
+			description = response["description"]
+			artist = response["user"]["name"]
+			artisturl = response["user"]["portfolio_url"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
+			
+			# write it to file image_info.txt
+			write(creditfile, side + " monitor:\n")
+			write(creditfile, side + " monitor:\n")
+			write(creditfile, "	Description: " + description + "\n")
+			write(creditfile, "	Artist: " + artist + "\n")
+			write(creditfile, "	Artist Portfolio: " + artisturl + "\n\n")
+			
+			# repeat once more for right monitor
+			side = "Right"
+		
+		# credit to Unsplash.com
+		creditfile.write("Images from unsplash.com")
+		creditfile.close()
 		
 	return imagepaths
 
+def write(file, string):
+	try:
+		file.write(string)
+		print string
+	except TypeError:
+		pass
+	
+# downloads image to path
+def download(url, imagepath):
+	if not os.path.isfile(imagepath): # only download if it doesn't exist already
+		# Download image and return the path to it
+		imagefile = open(imagepath, "wb")
+		imagefile.write(urllib.urlopen(url).read())
+		imagefile.close()
+	else:
+		print "file " + str(imagepath) + " already exists, using cached image"
 	
 def combine(imagepaths):
 	wallpaperpath = imagedir + "current.jpg"
-	
-	debug("imgagepaths")
-	debug(imagepaths)
 	
 	left = Image.open(imagepaths[0])
 	right = Image.open(imagepaths[1])
