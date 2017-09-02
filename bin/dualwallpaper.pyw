@@ -171,14 +171,14 @@ def combine(imagepaths):
 	return wallpaperpath
 
 	
-def setWallpaper(image): 
-	if (OS == 'Windows'):   # Windows
+def setWallpaper(image):
+	if (OS == 'Windows'):
 		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
     
-    if (OS == 'Linux'):   # Linux / gnome    - untested
+	if (OS == 'Linux'):
 		command = "gconftool-2 --set \
-            /desktop/gnome/background/picture_filename \
-            --type string '%s'" % image
+		/desktop/gnome/background/picture_filename \
+		--type string '%s'" % image
 		status, output = commands.getstatusoutput(command)
 	
 
