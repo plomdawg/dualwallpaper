@@ -1,8 +1,11 @@
 import urllib # for downloading URLs
 import urllib2 # for downloading URLs
 import pip # for downloading Pillow (image manipulator)
+from pip import main
 from platform import system # for checking OS
 import os 
+from os import mkdir
+from os import listdir
 import re # for crawling for URLs
 import random
 import ctypes # for setting wallpaper
@@ -11,13 +14,13 @@ import ctypes # for setting wallpaper
 try:
 	from PIL import Image
 except ImportError:
-	pip.main(['install', "Pillow"]) # for putting images together
+	main(['install', "Pillow"]) # for putting images together
 	from PIL import Image
 	
 try:
 	import requests # for http requests (unsplashed.com)
 except ImportError:
-	pip.main(['install', "requests"])
+	main(['install', "requests"])
 	import requests
 	
 # figure out operating system
@@ -30,11 +33,12 @@ avoidcached = False
 debug = False
 
 # # directories # #
-bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
+#bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
+bindir = ".\\"
 imagedir = bindir + "..\\images\\"
 # make the directory
 try:
-	os.mkdir(imagedir)
+	mkdir(imagedir)
 except OSError: # directory exists
 	pass
 # # lists # # 
@@ -44,9 +48,9 @@ downloaded=[]
 # fill downloaded list if image directory already exists
 def makeImageDir(website):
 	try:
-		os.mkdir(imagedir + website)
+		mkdir(imagedir + website)
 	except OSError: # directory exists
-		for image in os.listdir(imagedir):
+		for image in listdir(imagedir):
 			downloaded.append(image)
 
 def debug(this):
@@ -187,5 +191,5 @@ def main(website):
 	wallpaper = combine(images)
 	setWallpaper(wallpaper)
 
-#main("mikedrawsdota")
-main("unsplash")
+main("mikedrawsdota")
+#main("unsplash")
