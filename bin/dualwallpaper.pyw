@@ -1,6 +1,7 @@
 import urllib # for downloading URLs
 import urllib2 # for downloading URLs
 import pip # for downloading Pillow (image manipulator)
+from platform import system # for checking OS
 import os 
 import re # for crawling for URLs
 import random
@@ -19,21 +20,25 @@ except ImportError:
 	pip.main(['install', "requests"])
 	import requests
 	
+# figure out operating system
+OS = system() # using platform.system()
 	
-# config
+# # # config # # #
 width = "1920"
 height = "1080"
 avoidcached = False
 debug = False
 
-# directories
+# # directories # #
 bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
 imagedir = bindir + "..\\images\\"
-makeImageDir("") # create image directory
-
-# lists
+# make the directory
+try:
+	os.mkdir(imagedir)
+except OSError: # directory exists
+	pass
+# # lists # # 
 downloaded=[]
-
 
 
 # fill downloaded list if image directory already exists
@@ -55,19 +60,16 @@ def getImages(website):
 	goodurls=[]   # holds only the two to download
 	imagepaths=[] # where the images sit after download
 	
+	makeImageDir(website)
+	
 	if website is "mikedrawsdota":
-		makeImageDir(website)
 		websiteurl = 'http://mdd.hirshon.net/'
 		# go to website and scrape urls, sort out the ones with resolution in filename
 		for url in re.findall('''href=["'](.[^"']+)["']''', urllib.urlopen(websiteurl).read(), re.I):
 			if width in url and height in url:
 					urls.append(url)
-					debug("all urls")
-					debug(url)
-					if url.split('/')[-1] not in downloaded: # add to unused array if we havent seen it before
-						debug("unused")
-						debug(url)
-						unusedurls.append(url)
+					if url.split('/')[-1] not in downloaded: # if we havent seen it 
+						unusedurls.append(url)				 # add to unused array
 		
 		# until we find 2 good urls, keep looking
 		count = 0		
@@ -84,7 +86,6 @@ def getImages(website):
 		# once we have the 2 urls, download them and return image paths
 		for goodurl in goodurls:
 			filename = goodurl.split('/')[-1] # Set filename to url's filename
-			debug("filename: " + filename)
 			
 			# download image to path
 			path = imagedir + website + "\\" + filename
@@ -94,7 +95,6 @@ def getImages(website):
 					
 			
 	if website is "unsplash":
-		makeImageDir(website)
 		websiteurl = "https://api.unsplash.com/photos/random"
 		
 		# get authorized with dualwallpaper application id
@@ -171,12 +171,19 @@ def combine(imagepaths):
 	return wallpaperpath
 
 	
-def setWallpaper(image):
-	ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
+def setWallpaper(image): 
+	if (OS == 'Windows'):   # Windows
+		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
+    
+    if (OS == 'Linux'):   # Linux / gnome    - untested
+		command = "gconftool-2 --set \
+            /desktop/gnome/background/picture_filename \
+            --type string '%s'" % image
+		status, output = commands.getstatusoutput(command)
 	
 
-def main(url):
-	images = getImages(url)
+def main(website):
+	images = getImages(website)
 	wallpaper = combine(images)
 	setWallpaper(wallpaper)
 
