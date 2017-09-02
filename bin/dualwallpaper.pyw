@@ -1,14 +1,14 @@
 import urllib # for downloading URLs
 import urllib2 # for downloading URLs
-import pip # for downloading Pillow (image manipulator)
+#import pip # for downloading Pillow (image manipulator)
 from pip import main
 from platform import system # for checking OS
-import os 
+from os import path
 from os import mkdir
 from os import listdir
 import re # for crawling for URLs
 import random
-import ctypes # for setting wallpaper
+import ctypes # for setting windows wallpaper
 
 # import / install some stuff we need
 try:
@@ -23,18 +23,16 @@ except ImportError:
 	main(['install', "requests"])
 	import requests
 	
-# figure out operating system
-OS = system() # using platform.system()
 	
 # # # config # # #
 width = "1920"
 height = "1080"
 avoidcached = False
-debug = False
+debug = True
 
 # # directories # #
-#bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
-bindir = ".\\"
+bindir = path.dirname(path.realpath(__file__)) + "\\"
+#bindir = ".\\"
 imagedir = bindir + "..\\images\\"
 # make the directory
 try:
@@ -92,7 +90,7 @@ def getImages(website):
 			filename = goodurl.split('/')[-1] # Set filename to url's filename
 			
 			# download image to path
-			path = imagedir + website + "\\" + filename
+			path = imagedir + website + '\\' + filename
 			download(goodurl, path)
 			
 			imagepaths.append(path) # add the image path to list
@@ -125,20 +123,22 @@ def getImages(website):
 			
 			# get image info
 			description = response["description"]
+			fullimage = response["urls"]["full"].encode("ascii") + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
 			artist = response["user"]["name"]
-			artisturl= response["user"]["portfolio_url"]
+			artisturl= response["user"]["username"]
 			if artisturl:
-				artisturl= response["user"]["portfolio_url"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
+				artisturl= "https://unsplash.com/@" + response["user"]["username"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
 			# write it to file image_info.txt
 			write(creditfile, "%s monitor:" % side)
 			write(creditfile, "	Description: %s" % description)
 			write(creditfile, "	Artist: %s" % artist)
-			write(creditfile, "	Artist Portfolio: %s\n" % artisturl)			
+			write(creditfile, "	Artist Profile: %s\n" % artisturl)			
+			write(creditfile, "	Full Image: %s\n" % fullimage)			
 			# repeat once more for right monitor
 			side = "Right"
 		
 		# credit to Unsplash.com
-		creditfile.write("Images from unsplash.com")
+		write(creditfile, "Images from unsplash.com")
 		creditfile.close()
 		
 	return imagepaths
@@ -152,7 +152,7 @@ def write(file, string):
 	
 # downloads image to path
 def download(url, imagepath):
-	if not os.path.isfile(imagepath): # only download if it doesn't exist already
+	if not path.isfile(imagepath): # only download if it doesn't exist already
 		# Download image and return the path to it
 		imagefile = open(imagepath, "wb")
 		imagefile.write(urllib.urlopen(url).read())
@@ -162,6 +162,7 @@ def download(url, imagepath):
 	
 def combine(imagepaths):
 	wallpaperpath = imagedir + "current.jpg"
+	debug("combining: \n" + imagepaths[0] + "\n" + imagepaths[1] + "\n into:\n" + wallpaperpath)
 	
 	left = Image.open(imagepaths[0])
 	right = Image.open(imagepaths[1])
@@ -176,10 +177,11 @@ def combine(imagepaths):
 
 	
 def setWallpaper(image):
-	if (OS == 'Windows'):
+	debug("Setting wallpaper to: \n" + image + " on system=" + system())
+	if (system() == 'Windows'):
 		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
     
-	if (OS == 'Linux'):
+	if (system() == 'Linux'): # untested
 		command = "gconftool-2 --set \
 		/desktop/gnome/background/picture_filename \
 		--type string '%s'" % image
@@ -191,5 +193,5 @@ def main(website):
 	wallpaper = combine(images)
 	setWallpaper(wallpaper)
 
-main("mikedrawsdota")
-#main("unsplash")
+#main("mikedrawsdota")
+main("unsplash")
