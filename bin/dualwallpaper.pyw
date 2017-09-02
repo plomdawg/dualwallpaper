@@ -24,7 +24,7 @@ except ImportError:
 width = "1920"
 height = "1080"
 avoidcached = False
-debug = True
+debug = False
 
 # directories
 bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
@@ -69,14 +69,6 @@ def getImages(website):
 						debug(url)
 						unusedurls.append(url)
 		
-		# debug info to figure out wtf is happening
-		
-		debug("plenty of unusedurls:")
-		debug(unusedurls)
-		
-		debug("all the urls:")
-		debug(urls)
-		
 		# until we find 2 good urls, keep looking
 		count = 0		
 		while count < 2: 
@@ -88,9 +80,6 @@ def getImages(website):
 				i = random.randrange(0, len(urls)) # generate random index
 				goodurls.append(urls.pop(i))	  # pop the url out of the list  urls and into goodurls
 				count += 1
-		
-		debug(goodurls)
-		
 		
 		# once we have the 2 urls, download them and return image paths
 		for goodurl in goodurls:
