@@ -6,5 +6,5 @@ Supported sites:
   - [mikedrawsdota](http://mdd.hirshon.net/)
   
 How to use:
-  - get [python 2.7.xx](https://www.python.org/downloads/)
+  - get/install [python 2.7.xx](https://www.python.org/downloads/)
   - run dualwallpaper.pyw to get a new wallpaper
