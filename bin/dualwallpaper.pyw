@@ -6,6 +6,7 @@ import re # for crawling for URLs
 import random
 import ctypes # for setting wallpaper
 
+# import / install some stuff we need
 try:
 	from PIL import Image
 except ImportError:
@@ -28,6 +29,7 @@ debug = True
 # directories
 bindir = os.path.dirname(os.path.realpath(__file__)) + "\\"
 imagedir = bindir + "..\\images\\"
+makeImageDir("") # create image directory
 
 # lists
 downloaded=[]
