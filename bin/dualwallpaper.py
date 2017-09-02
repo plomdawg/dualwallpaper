@@ -131,15 +131,14 @@ def getImages(website):
 			# get image info
 			description = response["description"]
 			artist = response["user"]["name"]
-			artisturl = response["user"]["portfolio_url"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
-			
+			artisturl= response["user"]["portfolio_url"]
+			if artisturl:
+				artisturl= response["user"]["portfolio_url"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
 			# write it to file image_info.txt
-			write(creditfile, side + " monitor:\n")
-			write(creditfile, side + " monitor:\n")
-			write(creditfile, "	Description: " + description + "\n")
-			write(creditfile, "	Artist: " + artist + "\n")
-			write(creditfile, "	Artist Portfolio: " + artisturl + "\n\n")
-			
+			write(creditfile, "%s monitor:" % side)
+			write(creditfile, "	Description: %s" % description)
+			write(creditfile, "	Artist: %s" % artist)
+			write(creditfile, "	Artist Portfolio: %s\n" % artisturl)			
 			# repeat once more for right monitor
 			side = "Right"
 		
@@ -151,7 +150,7 @@ def getImages(website):
 
 def write(file, string):
 	try:
-		file.write(string)
+		file.write("%s\n" % string)
 		print string
 	except TypeError:
 		pass
