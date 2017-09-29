@@ -114,6 +114,7 @@ def getImages(website):
 		for response in r.json():
 			url = response["urls"]["custom"].encode("ascii")
 			filename = response["id"].encode("ascii")
+			filename = filename + ".jpg"
 			
 			# download image from url to path
 			path = imagedir + website + "\\" + filename 
