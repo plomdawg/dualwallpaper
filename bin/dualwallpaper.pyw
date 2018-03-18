@@ -8,6 +8,7 @@ from os import listdir		# for listing directories
 import re					# for crawling for URLs
 import random
 import ctypes				# for setting windows wallpaper
+
 # Install Pillow and requests using pip
 try:
 	from PIL import Image
@@ -28,22 +29,21 @@ monitors = 2
 website = "mikedrawsdota"
 #website = "unsplash"
 
+
 # # DIRECTORIES # #
 bindir = path.dirname(path.realpath(__file__)) + "\\"
 imagedir = bindir + "..\\images\\"
 downloaded=[]
-try: 				
-	mkdir(imagedir) # make the folder
-except OSError: 	# folder exists
-	pass			# do nothing
 
 
 # # FUNCTIONS # #
 
-
-
 # fill downloaded list if image directory already exists
 def makeImageDir(website):
+	try: 				
+		mkdir(imagedir) # make the folder
+	except OSError: 	# folder exists
+		pass			# do nothing
 	try:
 		mkdir(imagedir + website)
 	except OSError: # directory exists
