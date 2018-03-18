@@ -11,7 +11,7 @@ How to use:
   - run dualwallpaper.pyw to get a new wallpaper
   
   
-# # # CONFIG # # #
+\# \# \# CONFIG \# \# \#
 width = "1920"
 height = "1080"
 monitors = 4
