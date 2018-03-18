@@ -10,13 +10,11 @@ How to use:
   - change config at line 24 in dualwallpaper.py (example below)
   - run dualwallpaper.pyw to get a new wallpaper
   
-  
-\# \# \# CONFIG \# \# \#
+```  
+# # # CONFIG # # #
 width = "1920"
 height = "1080"
-monitors = 4
-avoidcached = False
-debug = True
+monitors = 2
 website = "mikedrawsdota"
 #website = "unsplash"
-downloaded=[]
+```
