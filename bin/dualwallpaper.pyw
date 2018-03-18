@@ -22,38 +22,34 @@ except ImportError:
 	import requests
 
 # # # CONFIG # # #
-website = "mikedrawsdota"
-#website = "unsplash"
-
 width = "1920"
 height = "1080"
 monitors = 2
-avoidcached = False # force downloads every time
-debug = True		# print messages to console
+website = "mikedrawsdota"
+#website = "unsplash"
 
 # # DIRECTORIES # #
 bindir = path.dirname(path.realpath(__file__)) + "\\"
 imagedir = bindir + "..\\images\\"
 downloaded=[]
+try: 				
+	mkdir(imagedir) # make the folder
+except OSError: 	# folder exists
+	pass			# do nothing
 
 
 # # FUNCTIONS # #
 
+
+
 # fill downloaded list if image directory already exists
 def makeImageDir(website):
-	try: 				
-		mkdir(imagedir) # make the image folder
-	except OSError: 	# folder exists
-		pass			# do nothing
 	try:
-		mkdir(imagedir + website)	# make the image/website folder
-	except OSError: 				# directory exists
+		mkdir(imagedir + website)
+	except OSError: # directory exists
 		for image in listdir(imagedir):
 			downloaded.append(image)
 
-def debug(this):
-	if debug:
-		print this
 
 # downloads num images from the website given
 # returns paths to images as a list
@@ -78,13 +74,13 @@ def getImages(website, num):
 		# until we find num good urls, keep looking
 		count = 0		
 		while count < num: 
-			if avoidcached and len(unusedurls) > 0:
-				i = random.randrange(0, len(unusedurls)) # generate random index
-				goodurls.append(unusedurls.pop(i))	  # pop the url out of the list
+			if len(unusedurls) > 0:
+				i = random.randrange(0, len(unusedurls)) 	# generate random index
+				goodurls.append(unusedurls.pop(i))	  		# pop the url out of the list
 				count += 1
 			else:
 				i = random.randrange(0, len(urls)) # generate random index
-				goodurls.append(urls.pop(i))	  # pop the url out of the list  urls and into goodurls
+				goodurls.append(urls.pop(i))	   # pop the url out of the list  urls and into goodurls
 				count += 1
 		
 		# once we have the num urls, download them and return image paths
@@ -166,21 +162,21 @@ def download(url, imagepath):
 # num = # of images
 def combine(imagepaths, num):
 	outputfile = imagedir + "current.jpg"
-	debug("combining: \n" + imagepaths[0] + "\n" + imagepaths[1] + "\n into:\n" + outputfile)
+	print(str("combining: \n" + imagepaths[0] + "\n" + imagepaths[1] + "\n into:\n" + outputfile))
 	
 	img = Image.new('RGB', (int(width)*num, int(height)))
 	offset = 0
 	for x in range(0, num):						# for 0 --> num
-		with Image.open(imagepaths[x]) as currentimg: # open the current image
+		with open(imagepaths[x]) as currentimg: # open the current image
 			img.paste(currentimg, (offset, 0))  # paste it to the final image
-		offset += int(width)					# move offset to edge of image
+		offset += int(width)
 	
 	img.save(outputfile) # save it
 	return outputfile	 # return it
 
 # sets the given image as the wallpaper
 def setWallpaper(image):
-	debug("Setting wallpaper to: \n" + image + " on system=" + system())
+	print(str("Setting wallpaper to: \n" + image + " on system=" + system()))
 	if (system() == 'Windows'):
 		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
     
