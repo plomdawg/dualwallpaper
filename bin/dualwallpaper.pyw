@@ -25,7 +25,7 @@ except ImportError:
 # # # CONFIG # # #
 width = "1920"
 height = "1080"
-monitors = 2
+monitors = 1
 website = "mikedrawsdota"
 #website = "unsplash"
 
@@ -162,12 +162,11 @@ def download(url, imagepath):
 # num = # of images
 def combine(imagepaths, num):
 	outputfile = imagedir + "current.jpg"
-	print(str("combining: \n" + imagepaths[0] + "\n" + imagepaths[1] + "\n into:\n" + outputfile))
-	
+
 	img = Image.new('RGB', (int(width)*num, int(height)))
 	offset = 0
 	for x in range(0, num):						# for 0 --> num
-		with open(imagepaths[x]) as currentimg: # open the current image
+		with Image.open(imagepaths[x]) as currentimg: # open the current image
 			img.paste(currentimg, (offset, 0))  # paste it to the final image
 		offset += int(width)
 	
