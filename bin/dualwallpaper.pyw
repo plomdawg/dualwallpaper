@@ -25,7 +25,7 @@ except ImportError:
 # # # CONFIG # # #
 width = "1920"
 height = "1080"
-monitors = 1
+monitors = 2
 website = "mikedrawsdota"
 #website = "unsplash"
 
