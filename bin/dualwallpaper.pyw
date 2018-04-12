@@ -8,6 +8,7 @@ from os import listdir		# for listing directories
 import re					# for crawling for URLs
 import random
 import ctypes				# for setting windows wallpaper
+import time
 
 # Install Pillow and requests using pip
 try:
@@ -23,17 +24,33 @@ except ImportError:
 	import requests
 
 # # # CONFIG # # #
-width = "1920"
-height = "1080"
-monitors = 2
-website = "mikedrawsdota"
-#website = "unsplash"
+# 2 monitors with dimensions 1920x1080
+monitors = ["1920x1080", "1920x1080"]
+#website = "mikedrawsdota"
+website = "unsplash"
 
 
 # # DIRECTORIES # #
 bindir = path.dirname(path.realpath(__file__)) + "\\"
 imagedir = bindir + "..\\images\\"
 downloaded=[]
+
+# this is gross but will work
+# get width / height of biggest monitor
+# only checks widths
+num = len(monitors)
+multipledimensions = False
+width = 0
+height = 0
+for monitor in monitors:
+	dimensions = monitor.split("x")[0]
+	thiswidth = int(dimensions[0])
+	thisheight = int(dimensions[1])
+	if thiswidth is not width and width is not 0:
+		multipledimensions = True
+	if thiswidth > width:
+		width = thiswidth
+		height = thisheight
 
 
 # # FUNCTIONS # #
@@ -53,20 +70,24 @@ def makeImageDir(website):
 
 # downloads num images from the website given
 # returns paths to images as a list
-def getImages(website, num):
+def getImages():
 	urls=[]	      # holds all of them
 	usedurls=[]   # holds urls that have been downloaded
 	unusedurls=[] # holds urls that haven't been downloaded yet
 	goodurls=[]   # holds only the two to download
 	imagepaths=[] # where the images sit after download
+
+	global width
+	global height
 	
 	makeImageDir(website)
 	
 	if website is "mikedrawsdota":
 		websiteurl = 'http://mdd.hirshon.net/'
+
 		# go to website and scrape urls, sort out the ones with resolution in filename
 		for url in re.findall('''href=["'](.[^"']+)["']''', urllib.urlopen(websiteurl).read(), re.I):
-			if width in url and height in url:
+			if "1920x1080" in url:
 					urls.append(url)
 					if url.split('/')[-1] not in downloaded: # if we havent seen it 
 						unusedurls.append(url)				 # add to unused array
@@ -96,46 +117,89 @@ def getImages(website, num):
 			
 	if website is "unsplash":
 		websiteurl = "https://api.unsplash.com/photos/random"
-		
-		# get authorized with dualwallpaper application id
-		ID = 'cd356c3b262be554770bea925ce5119f0503605b31a6dc4f3e9365babfd1674c'		
-		image_params = {'w':width, 'h':height, 'count':num, 'client_id':ID}
-		
-		# Request an array of num images' json data from api
-		r = requests.get(websiteurl, params = image_params)
-		
 		creditfile = open(imagedir + "unsplash_image_info.txt", 'w')
 		
-		
-		# For each image
-		position = 0
-		for response in r.json():
-			url = response["urls"]["custom"].encode("ascii")
-			filename = response["id"].encode("ascii")
-			filename = filename + ".jpg"
+		# get authorized with dualwallpaper application id
+		ID = 'cd356c3b262be554770bea925ce5119f0503605b31a6dc4f3e9365babfd1674c'	
+
+		if multipledimensions:
+
+			position = 0
+			for monitor in monitors:
+				dimensions = monitor.split("x")
+				width = int(dimensions[0])
+				height = int(dimensions[1])
+				
+				image_params = {'w':width, 'h':height, 'count':1, 'client_id':ID}
 			
-			# download image from url to path
-			path = imagedir + website + "\\" + filename 
-			download(url, path)
-		
-			imagepaths.append(path)
+				# Request an array of num images' json data from api
+				r = requests.get(websiteurl, params = image_params)
+
+				# For the image
+				for response in r.json():
+					url = response["urls"]["custom"].encode("ascii")
+					filename = response["id"].encode("ascii")
+					filename = filename + ".jpg"
+					
+					# download image from url to path
+					path = imagedir + website + "\\" + filename 
+					download(url, path)
+					#time.sleep(10) # wait between downloads
+				
+					imagepaths.append(path)
+					
+					# get image info
+					description = response["description"]
+					fullimage = response["urls"]["full"].encode("ascii") + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
+					artist = response["user"]["name"]
+					artisturl= response["user"]["username"]
+					if artisturl:
+						artisturl= "https://unsplash.com/@" + response["user"]["username"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
+					# write it to file image_info.txt
+					write(creditfile, "%s position in image:" % position)
+					write(creditfile, "	Description: %s" % description)
+					write(creditfile, "	Artist: %s" % artist)
+					write(creditfile, "	Artist Profile: %s\n" % artisturl)			
+					write(creditfile, "	Full Image: %s\n" % fullimage)		
+
+					position += 1
+
+		else:
+			image_params = {'w':width, 'h':height, 'count':num, 'client_id':ID}
 			
-			# get image info
-			description = response["description"]
-			fullimage = response["urls"]["full"].encode("ascii") + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
-			artist = response["user"]["name"]
-			artisturl= response["user"]["username"]
-			if artisturl:
-				artisturl= "https://unsplash.com/@" + response["user"]["username"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
-			# write it to file image_info.txt
-			write(creditfile, "%s position in image:" % position)
-			write(creditfile, "	Description: %s" % description)
-			write(creditfile, "	Artist: %s" % artist)
-			write(creditfile, "	Artist Profile: %s\n" % artisturl)			
-			write(creditfile, "	Full Image: %s\n" % fullimage)			
-			# repeat once more for right monitor
-			position += 1
-		
+			# Request an array of num images' json data from api
+			r = requests.get(websiteurl, params = image_params)
+			
+			
+			# For each image
+			position = 0
+			for response in r.json():
+				url = response["urls"]["custom"].encode("ascii")
+				filename = response["id"].encode("ascii")
+				filename = filename + ".jpg"
+				
+				# download image from url to path
+				path = imagedir + website + "\\" + filename 
+				download(url, path)
+			
+				imagepaths.append(path)
+				
+				# get image info
+				description = response["description"]
+				fullimage = response["urls"]["full"].encode("ascii") + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
+				artist = response["user"]["name"]
+				artisturl= response["user"]["username"]
+				if artisturl:
+					artisturl= "https://unsplash.com/@" + response["user"]["username"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
+				# write it to file image_info.txt
+				write(creditfile, "%s position in image:" % position)
+				write(creditfile, "	Description: %s" % description)
+				write(creditfile, "	Artist: %s" % artist)
+				write(creditfile, "	Artist Profile: %s\n" % artisturl)			
+				write(creditfile, "	Full Image: %s\n" % fullimage)			
+				# repeat once more for right monitor
+				position += 1
+			
 		# credit to Unsplash.com
 		write(creditfile, "Images from unsplash.com")
 		creditfile.close()
@@ -160,15 +224,33 @@ def download(url, imagepath):
 	
 # combines the images given as a list of directories
 # num = # of images
-def combine(imagepaths, num):
+def combine(imagepaths):
+	out = "combine(" + str(imagepaths) + ")"
+	print out
 	outputfile = imagedir + "current.jpg"
 
-	img = Image.new('RGB', (int(width)*num, int(height)))
+# the sloppiest
+	totalwidth = 0
+	maxheight = 0
+	for monitor in monitors:
+		dimensions = monitor.split("x")
+		width = int(dimensions[0])
+		height = int(dimensions[1])
+		totalwidth += width
+		if height > maxheight:
+			maxheight = height
+
+	img = Image.new('RGB', (totalwidth, maxheight))
+
+	i = 0
 	offset = 0
-	for x in range(0, num):						# for 0 --> num
-		with Image.open(imagepaths[x]) as currentimg: # open the current image
+	for monitor in monitors:
+		width = int(monitor.split("x")[0])
+		with Image.open(imagepaths[i]) as currentimg: # open the current image
 			img.paste(currentimg, (offset, 0))  # paste it to the final image
 		offset += int(width)
+		i = i + 1
+
 	
 	img.save(outputfile) # save it
 	return outputfile	 # return it
@@ -191,10 +273,10 @@ def setWallpaper(image):
 
 # # WHERE STUFF HAPPENS # #
 
-# get as many images as monitors from the website chosen
-images = getImages(website, monitors) 
+# get as many images as monitors from the website chosens
+images = getImages() 
 
 # combine the images into one
-wallpaper = combine(images, monitors)
+wallpaper = combine(images)
 
 setWallpaper(wallpaper)
