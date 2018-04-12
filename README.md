@@ -7,14 +7,15 @@ Supported sites:
   
 How to use:
   - get/install [python 2.7.xx](https://www.python.org/downloads/)
-  - change config at line 24 in dualwallpaper.py (example below)
+  - download dualwallpaper.pyw above
+  - change config at line 26 in dualwallpaper.pyw (example below)
   - run dualwallpaper.pyw to get a new wallpaper
   
 ```  
 # # # CONFIG # # #
-width = "1920"
-height = "1080"
-monitors = 2
-website = "mikedrawsdota"
-#website = "unsplash"
+# 2 monitors with dimensions 1920x1080
+monitors = ["1920x1080", "1920x1080"]
+
+#website = "mikedrawsdota"
+website = "unsplash"
 ```
