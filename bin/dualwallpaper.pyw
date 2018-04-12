@@ -42,10 +42,15 @@ num = len(monitors)
 multipledimensions = False
 width = 0
 height = 0
+totalwidth = 0
+maxheight = 0
 for monitor in monitors:
-	dimensions = monitor.split("x")[0]
+	dimensions = monitor.split("x")
 	thiswidth = int(dimensions[0])
 	thisheight = int(dimensions[1])
+	totalwidth += thiswidth
+	if thisheight > maxheight:
+		maxheight = thisheight
 	if thiswidth is not width and width is not 0:
 		multipledimensions = True
 	if thiswidth > width:
@@ -225,30 +230,16 @@ def download(url, imagepath):
 # combines the images given as a list of directories
 # num = # of images
 def combine(imagepaths):
-	out = "combine(" + str(imagepaths) + ")"
-	print out
 	outputfile = imagedir + "current.jpg"
-
-# the sloppiest
-	totalwidth = 0
-	maxheight = 0
-	for monitor in monitors:
-		dimensions = monitor.split("x")
-		width = int(dimensions[0])
-		height = int(dimensions[1])
-		totalwidth += width
-		if height > maxheight:
-			maxheight = height
 
 	img = Image.new('RGB', (totalwidth, maxheight))
 
 	i = 0
 	offset = 0
 	for monitor in monitors:
-		width = int(monitor.split("x")[0])
 		with Image.open(imagepaths[i]) as currentimg: # open the current image
 			img.paste(currentimg, (offset, 0))  # paste it to the final image
-		offset += int(width)
+		offset += int(monitor.split("x")[0]) # width
 		i = i + 1
 
 	
