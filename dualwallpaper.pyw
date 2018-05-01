@@ -26,13 +26,14 @@ except ImportError:
 # # # CONFIG # # #
 # 2 monitors with dimensions 1920x1080
 monitors = ["1920x1080", "1920x1080"]
+
 #website = "mikedrawsdota"
 website = "unsplash"
 
 
 # # DIRECTORIES # #
-bindir = path.dirname(path.realpath(__file__)) + "\\"
-imagedir = bindir + "..\\images\\"
+here = path.dirname(path.realpath(__file__)) + "\\"
+imagedir = here + "images\\"
 downloaded=[]
 
 # this is gross but will work
