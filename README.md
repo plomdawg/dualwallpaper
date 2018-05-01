@@ -2,8 +2,8 @@
 Fetches images from URL and combines them into a 2-image dual wallpaper
 
 Supported sites:
-  - [unsplash](https://www.unsplash.com)
-  - [mikedrawsdota](http://mdd.hirshon.net/)
+  - [unsplash](https://www.unsplash.com) (any size)
+  - [mikedrawsdota](http://mdd.hirshon.net/) (1920x1080 only)
   
 How to use:
   - get/install [python 2.7.xx](https://www.python.org/downloads/)
