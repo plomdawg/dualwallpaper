@@ -1,6 +1,6 @@
-import urllib 				# for downloading URLs
-import urllib2 				# for downloading URLs
-from pip import main 		# for downloading modules
+import urllib				# for downloading URLs
+import urllib2				# for downloading URLs
+from pip import main		# for downloading modules
 from platform import system # for checking OS
 from os import path
 from os import mkdir		# for making a directory
@@ -26,6 +26,7 @@ except ImportError:
 # # # CONFIG # # #
 # 2 monitors with dimensions 1920x1080
 monitors = ["1920x1080", "1920x1080"]
+#monitors = ["1280x720", "1920x1080", "1366x768"]
 
 #website = "mikedrawsdota"
 website = "unsplash"
