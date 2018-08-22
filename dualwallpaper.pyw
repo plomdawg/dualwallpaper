@@ -1,7 +1,9 @@
+#/usr/bin/python
 import urllib				# for downloading URLs
 import urllib2				# for downloading URLs
 from pip import main		# for downloading modules
 from platform import system # for checking OS
+from os import system as runcommand # for calling linux commands
 from os import path
 from os import mkdir		# for making a directory
 from os import listdir		# for listing directories
@@ -24,17 +26,25 @@ except ImportError:
 	import requests
 
 # # # CONFIG # # #
-# 2 monitors with dimensions 1920x1080
-monitors = ["1920x1080", "1920x1080"]
-#monitors = ["1280x720", "1920x1080", "1366x768"]
+# Left monitor: 1920x1080
+# Right monitor: 3440x1440
+#monitors = ["1920x1080", "3440x1440"]
 
-#website = "mikedrawsdota"
-website = "unsplash"
+# Single 4k monitor
+monitors = ["3440x1440"]
+
+#website = "mikedrawsdota" # supports only 1920x1080
+website = "unsplash" # suports any size
 
 
 # # DIRECTORIES # #
-here = path.dirname(path.realpath(__file__)) + "\\"
-imagedir = here + "images\\"
+here = path.dirname(path.realpath(__file__))
+
+if (system() == 'Windows'):
+	imagedir = here + "\\images\\"
+else:
+	imagedir = here + "/images/"
+
 downloaded=[]
 
 # this is gross but will work
@@ -116,7 +126,10 @@ def getImages():
 			filename = goodurl.split('/')[-1] # Set filename to url's filename
 			
 			# download image to path
-			path = imagedir + website + '\\' + filename
+			if (system() == 'Windows'):
+				path = imagedir + website + '\\' + filename
+			else:
+				path = imagedir + website + '/' + filename
 			download(goodurl, path)
 			
 			imagepaths.append(path) # add the image path to list
@@ -149,9 +162,11 @@ def getImages():
 					filename = filename + ".jpg"
 					
 					# download image from url to path
-					path = imagedir + website + "\\" + filename 
+					if (system() == 'Windows'):
+						path = imagedir + website + '\\' + filename
+					else:
+						path = imagedir + website + '/' + filename
 					download(url, path)
-					#time.sleep(10) # wait between downloads
 				
 					imagepaths.append(path)
 					
@@ -186,7 +201,10 @@ def getImages():
 				filename = filename + ".jpg"
 				
 				# download image from url to path
-				path = imagedir + website + "\\" + filename 
+				if (system() == 'Windows'):
+					path = imagedir + website + '\\' + filename
+				else:
+					path = imagedir + website + '/' + filename
 				download(url, path)
 			
 				imagepaths.append(path)
@@ -255,18 +273,14 @@ def setWallpaper(image):
 		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
     
 	if (system() == 'Linux'): # untested
-		command = "gconftool-2 --set \
-		/desktop/gnome/background/picture_filename \
-		--type string '%s'" % image
-		status, output = commands.getstatusoutput(command)
-	
-
-
+		command = "gsettings set org.gnome.desktop.background picture-uri file://{}".format(image)
+		# calls os.system(command) to run the above command
+		runcommand(command)
 
 
 # # WHERE STUFF HAPPENS # #
 
-# get as many images as monitors from the website chosens
+# get as many images as monitors from the website chosen
 images = getImages() 
 
 # combine the images into one
