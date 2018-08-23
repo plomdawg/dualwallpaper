@@ -30,10 +30,10 @@ Supported sites:
     - `./dualwallpaper.pyw`
   - (Optional) To run automatically (run inside dualwallpaper directory or replace $(pwd) with your install directory)
     - Every hour
-      - `(crontab -l | grep -v dualwallpaper; echo "0 * * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; ) | crontab -`
+      - `{ crontab -l; echo "0 * * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
     - Every day
-      - `crontab -l | { cat; echo "0 0 * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
-    - Never
+      - `{ crontab -l; echo "0 0 * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
+    - Never (remove all crontab entries)
       - `crontab -l | { cat | grep -v dualwallpaper; } | crontab -`
   
 ```
