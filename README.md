@@ -14,7 +14,7 @@ Supported sites:
   - run dualwallpaper.pyw to get a new wallpaper
   
   
-## Linux - doesn't work yet
+## Linux
   - Install python 2.7 and pip
     - `sudo apt install python python-pip -y`
  ```
@@ -27,17 +27,22 @@ Supported sites:
     - `cd dualwallpaper`
   - change line 26 in dualwallpaper.pyw (example below
   - Run the script
-    - `python dualwallpaper.pyw`
+    - `./dualwallpaper.pyw`
+  - (Optional) To run automatically (must be run from within dualwallpaper directory)
+    - Every hour: `crontab -l | { cat; echo "0 * * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
+    - Every day: `crontab -l | { cat; echo "0 0 * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
+    - To disable:
+      - `crontab -l | { cat | grep -v dualwallpaper; } | crontab -`
   
 ```
-# # # CONFIG # # #
+# # # CONFIG EXAMPLE # # #
 # 2 monitors with dimensions 1920x1080
 monitors = ["1920x1080", "1920x1080"]
 
 # 3 monitors with various dimensions (from left to right)
-# monitors = ["1280x720", "1920x1080", "1366x768"]
+# monitors = ["1280x720", "1920x1080", "3440x1440"]
 
 # uncomment to choose a website
-#website = "mikedrawsdota"
-website = "unsplash"
+#website = "mikedrawsdota" # only supports 1920x1080 monitors
+website = "unsplash" # supports any size
 ```
