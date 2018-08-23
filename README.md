@@ -27,7 +27,10 @@ Supported sites:
     - `cd dualwallpaper`
   - change line 26 in dualwallpaper.pyw (example below
   - Run the script
-    - `./dualwallpaper.pyw`
+    - `python dualwallpaper.pyw`
+  - (Optional) To run from anywhere with `dualwallpaper` (run inside dualwallpaper directory)
+    - `sed -i "/dualwallpaper/d" ~/.bashrc # remove previous entries`
+    - `echo "alias dualwallpaper=\"python $(realpath dual*w)\"" >> ~/.bashrc; source ~/.bashrc`
   - (Optional) To run automatically (run inside dualwallpaper directory or replace $(pwd) with your install directory)
     - Every hour
       - `{ crontab -l; echo "0 * * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
@@ -35,7 +38,6 @@ Supported sites:
       - `{ crontab -l; echo "0 0 * * * /usr/bin/python $(pwd)/dualwallpaper.pyw"; } | crontab -`
     - Never (remove all crontab entries)
       - `crontab -l | { cat | grep -v dualwallpaper; } | crontab -`
-  
 ```
 # # # CONFIG EXAMPLE # # #
 # 2 monitors with dimensions 1920x1080

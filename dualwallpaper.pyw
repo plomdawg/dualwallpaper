@@ -178,7 +178,7 @@ def getImages():
 					if artisturl:
 						artisturl= "https://unsplash.com/@" + response["user"]["username"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
 					# write it to file image_info.txt
-					write(creditfile, "%s position in image:" % position)
+					write(creditfile, "Image %s:" % position)
 					write(creditfile, "	Description: %s" % description)
 					write(creditfile, "	Artist: %s" % artist)
 					write(creditfile, "	Artist Profile: %s\n" % artisturl)			
@@ -217,7 +217,7 @@ def getImages():
 				if artisturl:
 					artisturl= "https://unsplash.com/@" + response["user"]["username"] + "?utm_source=dualwallpaper&utm_medium=referral&utm_campaign=api-credit"
 				# write it to file image_info.txt
-				write(creditfile, "%s position in image:" % position)
+				write(creditfile, "Image %s:" % position)
 				write(creditfile, "	Description: %s" % description)
 				write(creditfile, "	Artist: %s" % artist)
 				write(creditfile, "	Artist Profile: %s\n" % artisturl)			
@@ -248,6 +248,7 @@ def download(url, imagepath):
 			f.write(urllib.urlopen(url).read())
 	
 # combines the images given as a list of directories
+# returns path to combined file
 # num = # of images
 def combine(imagepaths):
 	outputfile = imagedir + "current.jpg"
@@ -268,11 +269,11 @@ def combine(imagepaths):
 
 # sets the given image as the wallpaper
 def setWallpaper(image):
-	print(str("Setting wallpaper to: \n" + image + " on system=" + system()))
+	print(str("Setting wallpaper to: \n" + image))
 	if (system() == 'Windows'):
 		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
     
-	if (system() == 'Linux'): # untested
+	if (system() == 'Linux'):
 		command = "gsettings set org.gnome.desktop.background picture-uri file://{}".format(image)
 		# calls os.system(command) to run the above command
 		runcommand(command)
