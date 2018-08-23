@@ -10,7 +10,7 @@ Supported sites:
 ## Windows
   - get/install [python 2.7](https://www.python.org/downloads/)
   - download dualwallpaper.pyw above
-  - change config at line 26 in dualwallpaper.pyw (example below)
+  - change config at line 26 in dualwallpaper.pyw (see example below)
   - run dualwallpaper.pyw to get a new wallpaper
   
   
@@ -25,7 +25,7 @@ Supported sites:
     - `git clone https://github.com/plomdawg/dualwallpaper.git`
   - Go into the directory
     - `cd dualwallpaper`
-  - change line 26 in dualwallpaper.pyw (example below
+  - change line 26 in dualwallpaper.pyw (see example below)
   - Run the script
     - `python dualwallpaper.pyw`
   - (Optional) To run from anywhere with `dualwallpaper` (run inside dualwallpaper directory)
