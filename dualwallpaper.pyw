@@ -1,7 +1,7 @@
 #/usr/bin/python
 import urllib				# for downloading URLs
 import urllib2				# for downloading URLs
-from pip import main		# for downloading modules
+#from pip import main		# for downloading modules
 from platform import system # for checking OS
 from os import system as runcommand # for calling linux commands
 from os import path
