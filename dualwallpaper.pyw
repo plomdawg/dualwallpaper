@@ -30,8 +30,8 @@ except ImportError:
 # Right monitor: 3440x1440
 #monitors = ["1920x1080", "3440x1440"]
 
-# Single 4k monitor
-monitors = ["3440x1440"]
+# Small monitor + 4k monitor
+monitors = ["1920x1080", "3440x1440"]
 
 #website = "mikedrawsdota" # supports only 1920x1080
 website = "unsplash" # suports any size
