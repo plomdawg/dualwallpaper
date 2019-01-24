@@ -26,12 +26,8 @@ except ImportError:
 	import requests
 
 # # # CONFIG # # #
-# Left monitor: 1920x1080
-# Right monitor: 3440x1440
-#monitors = ["1920x1080", "3440x1440"]
-
 # Small monitor + 4k monitor
-monitors = ["1920x1080", "3440x1440"]
+monitors = ["1920x1080", "3840x2160"]
 
 #website = "mikedrawsdota" # supports only 1920x1080
 website = "unsplash" # suports any size
@@ -142,9 +138,10 @@ def getImages():
 		# get authorized with dualwallpaper application id
 		ID = 'cd356c3b262be554770bea925ce5119f0503605b31a6dc4f3e9365babfd1674c'	
 
+		position = 0
+
 		if multipledimensions:
 
-			position = 0
 			for monitor in monitors:
 				dimensions = monitor.split("x")
 				width = int(dimensions[0])
@@ -194,7 +191,6 @@ def getImages():
 			
 			
 			# For each image
-			position = 0
 			for response in r.json():
 				url = response["urls"]["custom"].encode("ascii")
 				filename = response["id"].encode("ascii")
