@@ -11,6 +11,7 @@ import re					# for crawling for URLs
 import random
 import ctypes				# for setting windows wallpaper
 import time
+import settings
 
 # Install Pillow and requests using pip
 try:
@@ -27,7 +28,9 @@ except ImportError:
 
 # # # CONFIG # # #
 # Small monitor + 4k monitor
-monitors = ["1920x1080", "3840x2160"]
+monitors = []
+monitor[0] = Monitor(width=1920, height=1080)
+monitor[1] = Monitor(width=3840, height=2160)
 
 #website = "mikedrawsdota" # supports only 1920x1080
 website = "unsplash" # suports any size
@@ -65,6 +68,17 @@ for monitor in monitors:
 		width = thiswidth
 		height = thisheight
 
+class Image(object):
+	def __init__(self, url):
+		self.url = url
+		
+class Monitor(object):
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
+		
+
+
 
 # # FUNCTIONS # #
 
@@ -80,6 +94,8 @@ def makeImageDir(website):
 		for image in listdir(imagedir):
 			downloaded.append(image)
 
+def getUnsplashImages(dimensions):
+	print("ok")
 
 # downloads num images from the website given
 # returns paths to images as a list
@@ -230,7 +246,7 @@ def getImages():
 def write(file, string):
 	try:
 		file.write("%s\n" % string)
-		print string
+		print(string)
 	except TypeError:
 		pass
 	
@@ -238,7 +254,7 @@ def write(file, string):
 # does nothing if file is found
 def download(url, imagepath):
 	if path.isfile(imagepath):
-		print "file " + str(imagepath) + " already exists, using cached image"
+		print("file " + str(imagepath) + " already exists, using cached image")
 	else: # file not found, download it
 		with open(imagepath, "wb") as f:
 			f.write(urllib.urlopen(url).read())
@@ -265,7 +281,7 @@ def combine(imagepaths):
 
 # sets the given image as the wallpaper
 def setWallpaper(image):
-	print(str("Setting wallpaper to: \n" + image))
+	print("Setting wallpaper to: %s\n" % image)
 	if (system() == 'Windows'):
 		ctypes.windll.user32.SystemParametersInfoA(20, 0, image, 3)
     
@@ -274,13 +290,15 @@ def setWallpaper(image):
 		# calls os.system(command) to run the above command
 		runcommand(command)
 
+def main():
+	# get as many images as monitors from the website chosen
+	images = getImages() 
 
-# # WHERE STUFF HAPPENS # #
+	# combine the images into one
+	wallpaper = combine(images)
 
-# get as many images as monitors from the website chosen
-images = getImages() 
+	setWallpaper(wallpaper)
 
-# combine the images into one
-wallpaper = combine(images)
 
-setWallpaper(wallpaper)
+if __name__ == '__main__':
+	main()
