@@ -1,20 +1,26 @@
-# dualwallpaper
+# THIS REPO HAS MOVED
+
+# https://gitlab.com/avalonparton/multiwall
+
+# THIS REPO HAS MOVED
+
+## dualwallpaper
 Fetches images from URL and combines them into a single n-image wallpaper
 
 Supported sites:
   - [unsplash](https://www.unsplash.com) (any size)
   - [mikedrawsdota](http://mdd.hirshon.net/) (1920x1080 only)
   
-# Usage
+## Usage
 
-## Windows
+### Windows
   - get/install [python 2.7](https://www.python.org/downloads/)
   - download dualwallpaper.pyw above
   - change config at line 26 in dualwallpaper.pyw (see example below)
   - run dualwallpaper.pyw to get a new wallpaper
   
   
-## Linux
+### Linux
   - Install python 2.7 and pip
     - `sudo apt install python python-pip -y`
  ```
